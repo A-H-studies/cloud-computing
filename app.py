@@ -30,7 +30,7 @@ APP_TITEL = os.environ.get("APP_TITEL", "Storingsmelder")
 # een keer vast in plaats van het overal in de query's te herhalen.
 PARAM = "%s" if DATABASE_URL else "?"
 
-PRIORITEITEN = ["laag", "normaal", "hoog"]
+PRIORITEITEN = ["Super-laag", "Super-normaal", "hoog"]
 
 
 # -------------------------------------------------------------------- database

@@ -1,97 +1,143 @@
-# Storingsmelder - Ahmad
+READMI
 
-Een klein meldingensysteem voor storingen. Je meldt een storing via een
-formulier, je ziet de openstaande meldingen in een lijst, en je sluit ze af als
-ze opgelost zijn.
+# 1-Beschrijving
 
-Deze applicatie is het startpunt voor **Cloud computing (B-UCLL-MGN13A)**. Je
-werkt er het hele semester mee. De applicatie zelf verandert bijna niet, wat
-verandert is hoe en waar ze draait.
+Dit project is een paython web application voor het regestereren en beheren van storingen . De appliactie gebruikt Flask en PostgreSQL en wordt met docker Compose uitgevoerd .
 
----
 
-## Wat er in deze repo zit
+de aplicatie en data base drain in een afzonderlijk conteiners . de database gegecvens worden opgeslagen in een persistent Docker volume , zodat ze behouden blijven waneer de conteiners opnieuw worden gestart 
 
-```
-app.py              de applicatie
-requirements.txt    de pakketten die ze nodig heeft
-templates/          de HTML van de webpagina
-```
 
-## Wat er bewust niet in zit
+# 2-Technologieen 
+- python
+- PostgreSQL
+- Docker 
+- Docker compose 
+- git hub container regestery 
 
-Geen Dockerfile en geen compose-bestand. Die schrijf je zelf, dat is precies
-wat je in dit vak leert.
+# 3-Veriesten 
 
----
+installeer : 
+docker desktop 
+Git
 
-## Wat de applicatie nodig heeft
+controleer of docker werkt na het installatie :
 
-| | |
-|---|---|
-| Python | 3.11 of hoger |
-| Pakketten | staan in `requirements.txt` |
-| Poort | 8000, tenzij je `PORT` anders instelt |
+shell :docker --version 
+moet de versie uit geven
+shell :docker compose version 
+versie uit gaven anders het is nog niet geinsteleerd of werkt niet !!
 
-## Instellingen
+# 4-installatie vanaf null
 
-Alles wordt geregeld met environment variables. Er staat niets vast in de code,
-en er is geen configuratiebestand dat je moet aanpassen.
+stap 1 repository ophalen 
+clone de repository
+git clone : https://github.com/A-H-studies/cloud-computing
+shwll : cd cloud-computing (licatie van de repository ) 
 
-| Variabele | Standaard | Wat het doet |
-|---|---|---|
-| `DATABASE_URL` | leeg | Leeg betekent opslaan in een SQLite-bestand. Vul je hier een PostgreSQL-adres in, dan gebruikt de applicatie die database |
-| `SQLITE_PAD` | `/data/storingen.db` | Waar het SQLite-bestand komt te staan |
-| `APP_TITEL` | `Storingsmelder` | De titel bovenaan de pagina |
-| `PORT` | `8000` | De poort waarop de applicatie luistert |
 
-### Twee standen
+Stap 2 : omgeving variable installeren 
 
-De applicatie draait met of zonder aparte database.
+Maak een locale .env aan op basis van het voorbeeldbestand 
 
-**Zonder `DATABASE_URL`** schrijft ze naar een SQLite-bestand. Dat werkt meteen
-en je hebt niets anders nodig. Let op waar dat bestand terechtkomt, want daar
-kom je later op terug.
+shell : copy-item .env.example .env 
 
-**Met `DATABASE_URL`** praat ze met PostgreSQL. Bijvoorbeeld:
+open de .env en vull de versie waarden in 
 
-```
-DATABASE_URL=postgresql://storing:geheim@db:5432/storingen
-```
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
 
-Je hoeft de tabel niet zelf aan te maken. De applicatie doet dat bij het
-opstarten als ze nog niet bestaat.
+gebruik een sterke database wachtwoord 
 
----
 
-## Controleren of ze draait
+stap 3 : applicatie starten 
 
-Naast de gewone pagina is er een adres dat kort antwoordt of alles in orde is:
+docker compose up --build -d 
 
-```
-GET /health
-```
+controleer de status : 
 
-Draait alles, dan krijg je `{"status": "ok", ...}` met code 200. Kan de
-applicatie haar database niet bereiken, dan krijg je code 503. Dat adres komt
-later in het semester nog van pas.
+docker compose  ps 
 
----
+bekijk de applicatie indien nodig : 
 
-## Wat je er dit semester mee doet
+docker compose logs --tail=50 web 
 
-| Blok | Wat je doet |
-|---|---|
-| Week 1 tot 4 | Je zet deze applicatie in een container en laat ze samen met een database draaien |
-| Week 5 tot 9 | Je zet diezelfde applicatie op een Kubernetes-cluster en maakt ze bereikbaar in je browser |
-| Week 10 tot 11 | Je laat een pipeline het image bouwen en klaarzetten |
+(je ziet de de laatste 50 log lijnen van de web ) 
 
-Je begint dus nooit opnieuw. Elke opdracht bouwt verder op de vorige.
+stap 4 : applicatie openen 
 
----
 
-## Deze repo is van jou
+open devolgende URL :
+http://localhost:8000
 
-Je hebt hem gemaakt vanaf het sjabloon, dus dit is jouw kopie. Werk erin, commit
-elke les, en push. Indienen doe je met de link naar een commit. Hoe dat precies
-gaat, staat in de opdrachtbundel op Toledo.
+# 5-Beheercomandos : 
+
+de container stoppen 
+shell : docker compose stop 
+
+de container opnieuw starten 
+shell : docker compose start 
+
+de container stoppen en verwijderen 
+
+shell : docker compose down
+
+de logs bekijken : 
+
+shell : docker compose logs -f 
+
+de applicatie opnieuw bouwen en starten :
+
+shell : docker compose up --build -d 
+
+
+# 6-Database en pemanente opslag 
+
+POstgreSQL gebruikt het Docker-volume db-data om databasegegevens te bewaren. Daardoor blijven de gegevens beschikbaar nadat conteiners zijn gestopt , verwijder of opnieuw aangemakt , zolang het volume behouden blijft . 
+
+gebruik bij het normale stoppen : 
+docker compose down 
+
+verwijder het database volume niet als de opslagegeven behouden moeten blijven . het commando docker compose down -v kan de gegevens verwijderen .
+
+
+# 7-configuratie en beveliging 
+
+de volgende bestanden worden gebruikt 
+
+dockerfile : bout de python applicatie image 
+compose.yaml : configureert de applicatie en de PostgreSQL .
+.env : bevat de geheim gegevens (password , user , etc ) de password moet aleen latters en cijfers zijn 
+.env.example : toont de vereiste omgevingsvriable zonder geheime gegevens 
+gitignore : voorkomt dat locale bestande en .env aan Git worden toegevoegd 
+.dockerignore : voorkomt dat onnodige bestanden en geheime gegevens in de Docker-buildcontext terechtkomt 
+
+
+
+# 8-problemen en opsossing 
+
+als de applicatie niet beschikbaar is dan controller de status door  : 
+
+shell : docker compose ps 
+
+die toont de status van uw container 
+
+de logs bekijken :
+
+shell : docker compose logs --tail=100 web 
+voor de logs van de web 
+shell : docker compose logs --tail=100 db
+voor de logs van de data base 
+
+
+controleer daar in als de omgevingsvriable correct zijn (user en password ) en of de database gezond is .
+
+als poort 8000 al door een andere applicatie wordt gebrukt , controleer dan de poortenconfiguratie in compose.yaml .
+
+# 9-Stoppen 
+
+stop en verwijder de conteiners met :
+shell :docker compose down 
+
+de datagegevens blijven bewaard zolang je de bijbehornde docker volume niet wordt verwijdert 
